@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Portfolio | 3D Scroll Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root {
+            --accent: #B8860B; /* Gold from your portrait */
+            --dark: #000000;
+            --white: #ffffff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Barlow', sans-serif; 
+            background: var(--dark); 
+            color: var(--white); 
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        /* 3D Background Canvas */
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Nav & Layout */
+        nav { position: fixed; top: 0; width: 100%; padding: 30px 50px; display: flex; justify-content: space-between; z-index: 1000; }
+        .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; }
+        .logo span { color: var(--accent); }
+
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 10%;
+            position: relative;
+        }
+
+        .content-box {
+            max-width: 600px;
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s ease-out;
+        }
+
+        .content-box.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(60px, 10vw, 120px); line-height: 1; margin-bottom: 20px; }
+        h1 span { color: var(--accent); }
+        p { font-size: 1.2rem; color: rgba(255,255,255,0.6); margin-bottom: 30px; }
+
+        .skill-tag {
+            display: inline-block;
+            padding: 8px 15px;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
+        }
+
+        /* Button Styling - Matching the theme */
+        .btn-more-info {
+            display: inline-block;
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            padding: 12px 32px;
+            font-family: 'Barlow', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+        .btn-more-info:hover {
+            background: var(--accent);
+            color: var(--dark);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(184, 134, 11, 0.5);
+        }
+
+        /* Indicator for Scroll */
+        .scroll-line {
+            position: fixed;
+            right: 50px;
+            top: 50%;
+            height: 100px;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+        }
+        .scroll-progress {
+            position: absolute;
+            top: 0;
+            width: 100%;
+            background: var(--accent);
+            height: 0%;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="canvas-container"></div>
+
+    <nav>
+        <div class="logo">AURA<span>.DIGITAL</span></div>
+    </nav>
+
+    <div class="scroll-line"><div class="scroll-progress" id="progress"></div></div>
+
+    <section id="hero">
+        <div class="content-box visible">
+            <div class="skill-tag">dejital</div>
+            <h1>LESS IS<br><span>MORE.</span></h1>
+            <p>Fusing technical precision with high-end design. Explore my work through the digital void.</p>
+        </div>
+    </section>
+
+   
+
+    <section id="design">
+        <div class="content-box">
+            <div class="skill-tag">Creative Direction</div>
+            <h1>VISUAL<span>DESIGN.</span></h1>
+            <p> Minimalist aesthetics met with professional execution.</p>
+            <!-- New Button added here -->
+            <a href="aaa.html" class="btn-more-info">more info</a>
+        </div>
+    </section>
+    
+     
+
+    <div class="content-box">
+        <button type="button" onclick="location.href='aaa.html'">more info</button>
+    </div>
+
+    <script>
+
+        // --- THREE.JS 3D SCENE ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Create a 3D Geometry (Wireframe Torus Knot)
+        const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+        const material = new THREE.MeshBasicMaterial({ 
+            color: 0xB8860B, 
+            wireframe: true, 
+            transparent: true, 
+            opacity: 0.3 
+        });
+        const shape = new THREE.Mesh(geometry, material);
+        scene.add(shape);
+
+        // Add Floating Particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const posArr = new Float32Array(5000 * 3);
+        for(let i=0; i < 5000 * 3; i++) {
+            posArr[i] = (Math.random() - 0.5) * 100;
+        }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
+        const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff });
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 30;
+
+        // --- SCROLL ANIMATION LOGIC ---
+        window.addEventListener('scroll', () => {
+            const scrollY = window.scrollY;
+            const height = document.documentElement.scrollHeight - window.innerHeight;
+            const scrolled = (scrollY / height);
+
+            // Move the 3D Shape based on scroll
+            shape.rotation.y = scrolled * 5;
+            shape.rotation.x = scrolled * 2;
+            shape.position.z = scrolled * 10;
+            
+            // Zoom camera based on scroll section
+            camera.position.z = 30 - (scrolled * 15);
+
+            // Change color based on section
+            if (scrolled > 0.7) shape.material.color.setHex(0xffffff); // Design: White
+            else shape.material.color.setHex(0xB8860B); // Engineering: Gold
+
+            // Progress bar
+            document.getElementById('progress').style.height = (scrolled * 100) + "%";
+
+            // Reveal text boxes
+            document.querySelectorAll('.content-box').forEach(box => {
+                const boxTop = box.getBoundingClientRect().top;
+                if(boxTop < window.innerHeight * 0.8) box.classList.add('visible');
+            });
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+            shape.rotation.y += 0.005;
+            particlesMesh.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Handle Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>
