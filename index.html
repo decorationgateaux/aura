@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional Portfolio | 3D Scroll Experience</title>
-    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;700&display=swap" rel="stylesheet">
+    <title>Professional Portfolio | Aura Digital</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@300;400;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         :root {
-            --accent: #B8860B; /* Gold from your portrait */
-            --dark: #000000;
-            --white: #ffffff;
+            --accent: #c9a96e;
+            --accent-light: #e8d5b0;
+            --accent-dark: #a0845c;
+            --bg-primary: #f8f6f3;
+            --bg-card: rgba(255,255,255,0.72);
+            --text-primary: #2d2a26;
+            --text-secondary: #6b6560;
+            --text-muted: #9a9590;
+            --border-light: rgba(201,169,110,0.15);
+            --shadow-soft: 0 4px 24px rgba(45,42,38,0.06);
+            --shadow-medium: 0 8px 40px rgba(45,42,38,0.1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
         body { 
             font-family: 'Barlow', sans-serif; 
-            background: var(--dark); 
-            color: var(--white); 
+            background: var(--bg-primary); 
+            color: var(--text-primary); 
             overflow-x: hidden;
-            background-attachment: fixed;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* 3D Background Canvas */
         #canvas-container {
             position: fixed;
             top: 0;
@@ -33,10 +41,28 @@
             pointer-events: none;
         }
 
-        /* Nav & Layout */
-        nav { position: fixed; top: 0; width: 100%; padding: 30px 50px; display: flex; justify-content: space-between; z-index: 1000; }
-        .logo { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 2px; }
-        .logo span { color: var(--accent); }
+        nav { 
+            position: fixed; top: 0; width: 100%; 
+            padding: 28px 50px; 
+            display: flex; justify-content: space-between; 
+            z-index: 1000; 
+            background: rgba(248,246,243,0.4);
+            backdrop-filter: blur(20px) saturate(1.8);
+            -webkit-backdrop-filter: blur(20px) saturate(1.8);
+            border-bottom: 1px solid transparent;
+            transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+        }
+        nav.scrolled {
+            background: rgba(248,246,243,0.88);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-soft);
+            padding: 18px 50px;
+        }
+        .logo { 
+            font-family: 'Bebas Neue', sans-serif; font-size: 1.8rem; letter-spacing: 3px; 
+            color: var(--text-primary);
+        }
+        .logo span { color: var(--accent-dark); }
 
         section {
             min-height: 100vh;
@@ -51,7 +77,7 @@
             max-width: 600px;
             opacity: 0;
             transform: translateY(50px);
-            transition: all 0.8s ease-out;
+            transition: all 1s cubic-bezier(0.4,0,0.2,1);
         }
 
         .content-box.visible {
@@ -59,54 +85,69 @@
             transform: translateY(0);
         }
 
-        h1 { font-family: 'Bebas Neue', sans-serif; font-size: clamp(60px, 10vw, 120px); line-height: 1; margin-bottom: 20px; }
-        h1 span { color: var(--accent); }
-        p { font-size: 1.2rem; color: rgba(255,255,255,0.6); margin-bottom: 30px; }
+        h1 { 
+            font-family: 'Bebas Neue', sans-serif; 
+            font-size: clamp(52px, 9vw, 110px); 
+            line-height: 1; margin-bottom: 24px; 
+            color: var(--text-primary);
+            letter-spacing: 1px;
+        }
+        h1 span { color: var(--accent-dark); }
+        p { 
+            font-size: 1.15rem; 
+            color: var(--text-secondary); 
+            margin-bottom: 32px; 
+            line-height: 1.7;
+            max-width: 480px;
+        }
 
         .skill-tag {
             display: inline-block;
-            padding: 8px 15px;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            font-size: 0.8rem;
+            padding: 8px 18px;
+            border: 1.5px solid var(--accent);
+            color: var(--accent-dark);
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
+            letter-spacing: 2.5px;
+            margin-bottom: 16px;
+            border-radius: 30px;
+            background: rgba(201,169,110,0.06);
+            font-weight: 600;
         }
 
-        /* Button Styling - Matching the theme */
         .btn-more-info {
             display: inline-block;
             background: transparent;
             border: 2px solid var(--accent);
-            color: var(--accent);
-            padding: 12px 32px;
+            color: var(--accent-dark);
+            padding: 14px 36px;
             font-family: 'Barlow', sans-serif;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 3px;
             cursor: pointer;
-            transition: all 0.4s ease;
+            transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
             text-decoration: none;
             margin-top: 20px;
+            border-radius: 40px;
         }
 
         .btn-more-info:hover {
             background: var(--accent);
-            color: var(--dark);
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(184, 134, 11, 0.5);
+            color: #fff;
+            transform: scale(1.05) translateY(-2px);
+            box-shadow: 0 8px 30px rgba(201, 169, 110, 0.3);
         }
 
-        /* Indicator for Scroll */
         .scroll-line {
             position: fixed;
             right: 50px;
             top: 50%;
             height: 100px;
             width: 2px;
-            background: rgba(255,255,255,0.1);
+            background: rgba(201,169,110,0.15);
+            border-radius: 1px;
         }
         .scroll-progress {
             position: absolute;
@@ -114,6 +155,55 @@
             width: 100%;
             background: var(--accent);
             height: 0%;
+            border-radius: 1px;
+            transition: height 0.1s ease;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.4;
+        }
+        .scroll-hint span {
+            width: 1px;
+            height: 50px;
+            background: var(--accent);
+            display: block;
+            animation: pulse-line 2s ease-in-out infinite;
+        }
+        @keyframes pulse-line {
+            0%, 100% { transform: scaleY(1); opacity: 0.6; }
+            50% { transform: scaleY(0.6); opacity: 0.3; }
+        }
+
+        @media (max-width: 768px) {
+            nav { padding: 18px 24px; }
+            nav.scrolled { padding: 14px 24px; }
+            .logo { font-size: 1.4rem; }
+
+            section { padding: 0 8%; min-height: auto; padding-top: 100px; padding-bottom: 80px; }
+
+            h1 { font-size: clamp(40px, 12vw, 64px); margin-bottom: 16px; }
+            p { font-size: 1rem; margin-bottom: 24px; }
+            .skill-tag { font-size: 0.7rem; padding: 6px 14px; }
+            .btn-more-info { padding: 12px 28px; font-size: 0.8rem; }
+
+            .scroll-line { right: 24px; height: 60px; }
+            .scroll-hint { bottom: 24px; }
+            .scroll-hint span { height: 36px; }
+        }
+
+        @media (max-width: 480px) {
+            section { padding: 0 6%; padding-top: 90px; padding-bottom: 60px; }
+            h1 { font-size: clamp(36px, 14vw, 52px); }
+            p { font-size: 0.95rem; }
+            .content-box { max-width: 100%; }
         }
     </style>
 </head>
@@ -121,7 +211,7 @@
 
     <div id="canvas-container"></div>
 
-    <nav>
+    <nav id="navbar">
         <div class="logo">AURA<span>.DIGITAL</span></div>
     </nav>
 
@@ -129,104 +219,131 @@
 
     <section id="hero">
         <div class="content-box visible">
-            <div class="skill-tag">dejital</div>
+            <div class="skill-tag">Digital Creative Studio</div>
             <h1>LESS IS<br><span>MORE.</span></h1>
-            <p>Fusing technical precision with high-end design. Explore my work through the digital void.</p>
+            <p>Fusing technical precision with high-end design. Explore our work through the digital void.</p>
+        </div>
+        <div class="scroll-hint">
+            <span></span>
         </div>
     </section>
-
-   
 
     <section id="design">
         <div class="content-box">
             <div class="skill-tag">Creative Direction</div>
-            <h1>VISUAL<span>DESIGN.</span></h1>
-            <p> Minimalist aesthetics met with professional execution.</p>
-            <!-- New Button added here -->
+            <h1>VISUAL<br><span>DESIGN.</span></h1>
+            <p>Minimalist aesthetics met with professional execution. We craft visuals that speak louder than words.</p>
             <a href="aaa.html" class="btn-more-info">more info</a>
         </div>
     </section>
-    
-     
 
-    <div class="content-box">
-        <button type="button" onclick="location.href='aaa.html'">more info</button>
-    </div>
+    <section id="engineering">
+        <div class="content-box">
+            <div class="skill-tag">Development</div>
+            <h1>CODE &<br><span>CRAFT.</span></h1>
+            <p>Building digital experiences with cutting-edge technology and pixel-perfect attention to detail.</p>
+            <a href="aaa.html" class="btn-more-info">more info</a>
+        </div>
+    </section>
 
     <script>
-
-        // --- THREE.JS 3D SCENE ---
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setClearColor(0x000000, 0);
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // Create a 3D Geometry (Wireframe Torus Knot)
-        const geometry = new THREE.TorusKnotGeometry(10, 3, 100, 16);
+        const geometry = new THREE.TorusKnotGeometry(10, 3, 120, 20);
         const material = new THREE.MeshBasicMaterial({ 
-            color: 0xB8860B, 
+            color: 0xc9a96e, 
             wireframe: true, 
             transparent: true, 
-            opacity: 0.3 
+            opacity: 0.15 
         });
         const shape = new THREE.Mesh(geometry, material);
         scene.add(shape);
 
-        // Add Floating Particles
+        const innerGeo = new THREE.IcosahedronGeometry(6, 2);
+        const innerMat = new THREE.MeshBasicMaterial({
+            color: 0xe8d5b0,
+            wireframe: true,
+            transparent: true,
+            opacity: 0.08
+        });
+        const innerShape = new THREE.Mesh(innerGeo, innerMat);
+        scene.add(innerShape);
+
         const particlesGeometry = new THREE.BufferGeometry();
-        const posArr = new Float32Array(5000 * 3);
-        for(let i=0; i < 5000 * 3; i++) {
-            posArr[i] = (Math.random() - 0.5) * 100;
+        const posArr = new Float32Array(3000 * 3);
+        for(let i=0; i < 3000 * 3; i++) {
+            posArr[i] = (Math.random() - 0.5) * 80;
         }
         particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArr, 3));
-        const particlesMaterial = new THREE.PointsMaterial({ size: 0.05, color: 0xffffff });
+        const particlesMaterial = new THREE.PointsMaterial({ 
+            size: 0.04, 
+            color: 0xc9a96e,
+            transparent: true,
+            opacity: 0.4
+        });
         const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
         scene.add(particlesMesh);
 
         camera.position.z = 30;
 
-        // --- SCROLL ANIMATION LOGIC ---
         window.addEventListener('scroll', () => {
             const scrollY = window.scrollY;
             const height = document.documentElement.scrollHeight - window.innerHeight;
             const scrolled = (scrollY / height);
 
-            // Move the 3D Shape based on scroll
             shape.rotation.y = scrolled * 5;
             shape.rotation.x = scrolled * 2;
             shape.position.z = scrolled * 10;
-            
-            // Zoom camera based on scroll section
-            camera.position.z = 30 - (scrolled * 15);
 
-            // Change color based on section
-            if (scrolled > 0.7) shape.material.color.setHex(0xffffff); // Design: White
-            else shape.material.color.setHex(0xB8860B); // Engineering: Gold
+            innerShape.rotation.y = -scrolled * 3;
+            innerShape.rotation.x = scrolled * 1.5;
 
-            // Progress bar
+            camera.position.z = 30 - (scrolled * 12);
+
+            if (scrolled > 0.6) {
+                shape.material.color.setHex(0xa0845c);
+                particlesMaterial.color.setHex(0xa0845c);
+            } else {
+                shape.material.color.setHex(0xc9a96e);
+                particlesMaterial.color.setHex(0xc9a96e);
+            }
+
             document.getElementById('progress').style.height = (scrolled * 100) + "%";
 
-            // Reveal text boxes
             document.querySelectorAll('.content-box').forEach(box => {
                 const boxTop = box.getBoundingClientRect().top;
-                if(boxTop < window.innerHeight * 0.8) box.classList.add('visible');
+                if(boxTop < window.innerHeight * 0.78) box.classList.add('visible');
             });
         });
 
         function animate() {
             requestAnimationFrame(animate);
-            shape.rotation.y += 0.005;
-            particlesMesh.rotation.y += 0.001;
+            shape.rotation.y += 0.003;
+            shape.rotation.x += 0.001;
+            innerShape.rotation.y -= 0.004;
+            particlesMesh.rotation.y += 0.0008;
             renderer.render(scene, camera);
         }
         animate();
 
-        // Handle Resize
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
         });
     </script>
 </body>
